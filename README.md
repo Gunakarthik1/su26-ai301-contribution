@@ -1,15 +1,26 @@
-# Contribution 1: [Issue Title - TBD]
+# Contribution 1: Extend RFECV attributes to indicate order of feature elimination
 
 **Contribution Number:** 1
 **Student:** Gunakarthik Naidu Lanka
-**Issue:** [GitHub issue link - coming soon]
-**Status:** Phase I In Progress
+**Issue:** https://github.com/scikit-learn/scikit-learn/issues/13756
+**Status:** Phase I Complete
 
 ---
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs explaining why this issue interests you, how it matches your skills/learning goals, what you hope to learn]
+I chose this issue because it involves scikit-learn, a Python machine learning 
+library that aligns directly with my Python background. The fix is well-scoped: 
+adding a new attribute to the RFECV class that tracks which feature was eliminated 
+at each step of recursive feature elimination. Currently, RFECV shows scores for 
+each step but does not expose which specific feature was removed, making it 
+difficult for users to interpret and verify results.
+
+I chose this issue specifically because the maintainer has explicitly welcomed a 
+pull request twice, confirming it is active and claimable. The work is contained 
+within one class in the feature selection module, which makes it approachable for 
+a first contribution. I want to learn how scikit-learn handles class attributes 
+and how open source contributions work in a large, well-maintained Python project.
 
 ---
 
@@ -17,19 +28,25 @@
 
 ### Problem Description
 
-[In your own words, what's broken or missing?]
+`sklearn.feature_selection.RFECV` performs recursive feature elimination with 
+cross-validation. It currently exposes scores at each elimination step, but does 
+not tell the user which feature was eliminated at each step. This missing 
+information makes it hard to trace and verify the elimination process.
 
 ### Expected Behavior
 
-[What should happen?]
+After fitting RFECV, users should be able to access a new attribute (e.g. 
+`ranking_order_` or `elimination_order_`) that lists which feature was removed 
+at each step of the recursive elimination process.
 
 ### Current Behavior
 
-[What actually happens?]
+Currently RFECV only exposes `cv_results_` scores per step, with no way to know 
+which feature was eliminated at each step.
 
 ### Affected Components
 
-[Which parts of the codebase are involved?]
+`sklearn/feature_selection/_rfe.py` — specifically the `RFECV` class.
 
 ---
 
@@ -37,7 +54,7 @@
 
 ### Environment Setup
 
-[Notes on setting up your local development environment - challenges you faced, how you solved them]
+[To be filled in Phase II]
 
 ### Steps to Reproduce
 
@@ -57,11 +74,11 @@
 
 ### Analysis
 
-[Your analysis of the root cause - what's causing the issue?]
+[To be filled in Phase II]
 
 ### Proposed Solution
 
-[High-level description of your fix approach]
+[To be filled in Phase II]
 
 ### Implementation Plan
 
@@ -105,9 +122,9 @@ Using UMPIRE framework (adapted):
 
 ## Implementation Notes
 
-### Week [X] Progress
+### Week 1 Progress
 
-[What you built this week, challenges faced, decisions made]
+Selected issue and set up contribution README. Forked scikit-learn repository.
 
 ### Week [Y] Progress
 
@@ -125,7 +142,7 @@ Using UMPIRE framework (adapted):
 
 **PR Link:** [GitHub PR URL when submitted]
 
-**PR Description:** [Draft or final PR description - much of the content above can be adapted]
+**PR Description:** [Draft or final PR description]
 
 **Maintainer Feedback:**
 - [Date]: [Summary of feedback received]
@@ -153,6 +170,6 @@ Using UMPIRE framework (adapted):
 
 ## Resources Used
 
-- [Link to helpful documentation]
-- [Tutorial or Stack Overflow post that helped]
-- [GitHub issues or discussions that helped]
+- https://github.com/scikit-learn/scikit-learn/issues/13756
+- https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html
+- https://github.com/scikit-learn/scikit-learn/blob/main/CONTRIBUTING.md
