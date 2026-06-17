@@ -68,7 +68,7 @@ Set up the official scikit-learn dev container (.devcontainer/) in VS Code/Curso
 
 - **Commit showing reproduction / branch link:** https://github.com/Gunakarthik1/scikit-learn/tree/fix-issue-13756
 - **Screenshots/logs:** [If applicable]
-- **My findings:** [What you discovered during reproduction]
+- **My findings:** Confirmed that RFECV exposes no attribute for per-step elimination order — only final ranking_ and support_ are available after fitting. This matches the gap described in the issue and was consistent across two separate runs.
 
 ---
 
@@ -76,11 +76,11 @@ Set up the official scikit-learn dev container (.devcontainer/) in VS Code/Curso
 
 ### Analysis
 
-[To be filled in Phase II]
+The root cause is that RFECV.fit() only tracks final feature rankings, not the sequence in which features are removed during the elimination loop. The information technically exists transiently during fitting but is discarded rather than stored.
 
 ### Proposed Solution
 
-[To be filled in Phase II]
+Add a new fitted attribute (e.g. elimination_order_) to RFECV that records the index of each feature as it's eliminated, populated inside the existing elimination loop in fit().
 
 ### Implementation Plan
 
