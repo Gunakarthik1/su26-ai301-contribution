@@ -4,7 +4,7 @@
 **Student:** Gunakarthik Naidu Lanka
 **Issue:** https://github.com/scikit-learn/scikit-learn/issues/13756
 **Fork:** https://github.com/Gunakarthik1/scikit-learn
-**Status:** Phase I Complete
+**Status:** Phase II Complete
 
 ---
 
@@ -55,17 +55,18 @@ which feature was eliminated at each step.
 
 ### Environment Setup
 
-[To be filled in Phase II]
+Set up the official scikit-learn dev container (.devcontainer/) in VS Code/Cursor with Docker Desktop running. The container's setup.sh installs micromamba and creates the sklearn-dev environment (Python 3.14). Two issues encountered: (1) the initial container build failed once and required Retry; (2) after creating the env, import numpy aborted with a libblis error (Default MC is non-multiple of MR) on aarch64 (Apple Silicon). Fixed by swapping the BLAS backend from blis to openblas: micromamba install -n sklearn-dev "libblas=*=*openblas" --yes. After that, built scikit-learn in editable mode with pip install --editable . --no-build-isolation, which succeeded.
 
 ### Steps to Reproduce
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. In the built sklearn-dev environment, create a script that fits RFECV on a toy dataset using make_classification, SVC, and RFECV from sklearn.
+2. Run python repro.py.
+3. Expected: an attribute exposing which feature was eliminated at each step.
+4. Actual: fitted attributes are only ['classes_', 'cv_results_', 'estimator_', 'n_features_', 'n_features_in_', 'ranking_', 'support_'] — no per-step elimination order is available. Confirmed consistent across two runs.
 
 ### Reproduction Evidence
 
-- **Commit showing reproduction:** [Link to commit in your fork]
+- **Commit showing reproduction / branch link:** https://github.com/Gunakarthik1/scikit-learn/tree/fix-issue-13756
 - **Screenshots/logs:** [If applicable]
 - **My findings:** [What you discovered during reproduction]
 
@@ -85,20 +86,21 @@ which feature was eliminated at each step.
 
 Using UMPIRE framework (adapted):
 
-**Understand:** [Restate the problem]
+**Understand:** RFECV performs recursive feature elimination but never records the order in which features were dropped. Users can see final rankings (ranking_) but not the step-by-step elimination sequence.
 
-**Match:** [What similar patterns/solutions exist in the codebase?]
+**Match:** The RFECV.fit() method in sklearn/feature_selection/_rfe.py already iterates through elimination rounds and builds up ranking_. The new attribute can be populated inside this same loop, following the existing fitted-attribute convention (trailing underscore).
 
-**Plan:** [Step-by-step implementation plan]
-1. [Modify file X to do Y]
-2. [Add function Z]
-3. [Update tests]
+**Plan:**
+1. In sklearn/feature_selection/_rfe.py, add a new fitted attribute (e.g. elimination_order_) to the RFECV class.
+2. Populate it inside the existing elimination loop in fit(), appending the index of each feature as it's removed.
+3. Document the attribute in the class docstring.
+4. Add a unit test in sklearn/feature_selection/tests/test_rfe.py.
 
-**Implement:** [Link to your branch/commits as you work]
+**Implement:** To be completed in Phase III on branch fix-issue-13756.
 
-**Review:** [Self-review checklist - does it follow the project's contribution guidelines?]
+**Review:** Self-review against scikit-learn's CONTRIBUTING.md and docstring/attribute conventions before opening a PR.
 
-**Evaluate:** [How will you verify it works?]
+**Evaluate:** Add a unit test asserting elimination_order_ has the expected length and contents; run the existing RFE/RFECV test suite to confirm no regressions.
 
 ---
 
