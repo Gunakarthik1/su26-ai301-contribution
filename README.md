@@ -4,7 +4,7 @@
 **Student:** Gunakarthik Naidu Lanka
 **Issue:** https://github.com/scikit-learn/scikit-learn/issues/13756
 **Fork:** https://github.com/Gunakarthik1/scikit-learn
-**Status:** Phase II Complete
+**Status:** Phase III Complete
 
 ---
 
@@ -108,18 +108,25 @@ Using UMPIRE framework (adapted):
 
 ### Unit Tests
 
-- [ ] Test case 1: [Description]
-- [ ] Test case 2: [Description]
-- [ ] Test case 3: [Description]
+- [x] `test_rfecv_elimination_order`: Fits RFECV on a synthetic 8-feature
+  classification dataset (SVC, step=1, cv=3); asserts that `elimination_order_`
+  exists, has length equal to `n_features - n_features_` (the number of
+  features actually eliminated), all indices are valid original feature indices
+  in `[0, n_features)`, and no eliminated index overlaps with the selected
+  feature set.
+- [x] Full `sklearn/feature_selection/tests/test_rfe.py` suite: **60 passed,
+  0 failures, 0 regressions** (verified via pytest inside the `sklearn-dev`
+  dev container, Python 3.14, pytest 9.1.0).
 
 ### Integration Tests
 
 - [ ] Integration scenario 1
-- [ ] Integration scenario 2
 
 ### Manual Testing
 
-[What you tested manually and results]
+Ran the complete `test_rfe.py` suite inside the official scikit-learn
+`sklearn-dev` dev container (Docker, micromamba, Python 3.14) on branch
+`fix-issue-13756`. All 60 tests passed with no failures or regressions.
 
 ---
 
@@ -129,15 +136,38 @@ Using UMPIRE framework (adapted):
 
 Selected issue and set up contribution README. Forked scikit-learn repository.
 
-### Week [Y] Progress
+### Week 3 Progress
 
-[Continue documenting as you work]
+Implemented `elimination_order_` as a new fitted attribute on `RFECV`. The
+attribute is a list of original feature indices in the order they were
+eliminated during the final full-dataset recursive feature elimination fit.
+
+The actual elimination loop lives in `RFE._fit()` (the shared internal method),
+not directly in `RFECV.fit()`. The implementation: (1) initializes
+`elimination_order_ = []` before the while loop in `_fit()`; (2) captures
+the eliminated indices each iteration as `eliminated = features[ranks][:threshold]`
+and extends the list; (3) stores the result as `self.elimination_order_` in the
+"Set final attributes" block; and (4) copies it to `self.elimination_order_` in
+`RFECV.fit()` alongside `ranking_` and `support_` after the final `rfe.fit()` call.
+The attribute docstring was added to the RFECV Attributes section following the
+existing style of `ranking_` and `support_`.
+
+A new unit test `test_rfecv_elimination_order` was added and the full
+`test_rfe.py` suite was run inside the `sklearn-dev` dev container
+(Python 3.14, pytest 9.1.0): **60 passed, 0 failures, 0 regressions**.
+Changes were committed and pushed to branch `fix-issue-13756`.
 
 ### Code Changes
 
-- **Files modified:** [List]
-- **Key commits:** [Links to important commits]
-- **Approach decisions:** [Why you chose certain approaches]
+- **Files modified:**
+  - `sklearn/feature_selection/_rfe.py`
+  - `sklearn/feature_selection/tests/test_rfe.py`
+- **Key commits:** https://github.com/Gunakarthik1/scikit-learn/commit/afcd939ac3c55c801dadfdf3382bd0517982bc80
+- **Approach decisions:** Tracked elimination order inside `RFE._fit()` (the
+  shared internal fit method) rather than duplicating logic in `RFECV.fit()`,
+  then surfaced the attribute on `RFECV` by copying it alongside the existing
+  `ranking_` and `support_` assignments. This keeps the implementation minimal
+  and consistent with how all other per-fit attributes are already propagated.
 
 ---
 
