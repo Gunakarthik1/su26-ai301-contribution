@@ -4,7 +4,7 @@
 **Student:** Gunakarthik Naidu Lanka
 **Issue:** https://github.com/scikit-learn/scikit-learn/issues/13756
 **Fork:** https://github.com/Gunakarthik1/scikit-learn
-**Status:** Phase III Complete
+**Status:** Phase IV Complete
 
 ---
 
@@ -173,15 +173,14 @@ Changes were committed and pushed to branch `fix-issue-13756`.
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when submitted]
+**PR Link:** https://github.com/scikit-learn/scikit-learn/pull/34685
 
-**PR Description:** [Draft or final PR description]
+**PR Description:** Added elimination_order_ attribute to RFE and RFECV that records the order in which features were eliminated during recursive feature elimination. This exposes per-step elimination sequence that was previously discarded during fitting.
 
 **Maintainer Feedback:**
-- [Date]: [Summary of feedback received]
-- [Date]: [How you addressed it]
+- Aug 9, 2026: CI flagged missing RFE docstring for elimination_order_ and missing changelog entry. Fixed in commit a2c45f928.
 
-**Status:** [Awaiting review / Iterating / Approved / Merged]
+**Status:** Awaiting review
 
 ---
 
